@@ -8,6 +8,7 @@
     "./src/codecs/binary/binary.ts",
     "./src/codecs/json/json.ts",
     "./src/crypt/index.ts",
+    "./src/crypt/noble.ts",
     "./src/crypt/node.ts",
     "./src/crypt/web-crypto.ts",
     "./src/common/common.ts",

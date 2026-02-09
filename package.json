@@ -64,6 +64,10 @@
       "types": "./dist/crypt/index.d.ts",
       "default": "./dist/crypt/index.js"
     },
+    "./crypt/noble": {
+      "types": "./dist/crypt/noble.d.ts",
+      "default": "./dist/crypt/noble.js"
+    },
     "./crypt/node": {
       "types": "./dist/crypt/node.d.ts",
       "default": "./dist/crypt/node.js"
@@ -222,6 +226,7 @@
     "@aws-sdk/client-s3": "^3.980.0",
     "@bitcoinerlab/secp256k1": "^1.2.0",
     "@eslint/js": "^9.39.2",
+    "@noble/ciphers": "^2.1.1",
     "@noble/secp256k1": "^3.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/content-type": "^1.1.9",
@@ -247,6 +252,7 @@
   "peerDependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
     "@bitcoinerlab/secp256k1": "^1.0.0",
+    "@noble/ciphers": "^2.0.0",
     "@noble/secp256k1": "^3.0.0",
     "better-sqlite3": "*",
     "bip32": "^5.0.0"

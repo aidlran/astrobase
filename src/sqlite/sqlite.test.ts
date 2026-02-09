@@ -1,6 +1,5 @@
 import Database from 'better-sqlite3';
-import { randomBytes } from 'node:crypto';
-import { expect, it, test } from 'vitest';
+import { expect, it } from 'vitest';
 import { testRPCStrategyForContent } from '../../testing/rpc-strategy.js';
 import sqlite from './sqlite.js';
 

@@ -12,6 +12,7 @@ export * from './common/common.js';
 export * from './content/index.js';
 export * from './ecdsa/index.js';
 export * from './crypt/index.js';
+export * from './crypt/noble.js';
 export * from './crypt/node.js';
 export * from './crypt/web-crypto.js';
 export * from './events/events.js';

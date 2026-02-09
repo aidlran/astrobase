@@ -38,8 +38,10 @@
 
 ### Added
 
-- **Crypt:** Added modules `@astrobase/sdk/crypt/node` & `@astrobase/sdk/crypt/web-crypto`.
+- **Crypt:** Added modules `@astrobase/sdk/crypt/noble`, `@astrobase/sdk/crypt/node` &
+  `@astrobase/sdk/crypt/web-crypto`.
 - **Crypt:** Added support for `node:crypto` API.
+- **Crypt:** Added support for `@noble/ciphers`.
 - **KDF:** Added modules `@astrobase/sdk/kdf/node` & `@astrobase/sdk/kdf/web-crypto`.
 - **KDF:** Added support for using a raw input material for KDF.
 - **SQLite:** Added support for passing a `Database` instance instead of a config.
