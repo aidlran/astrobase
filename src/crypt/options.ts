@@ -3,6 +3,9 @@ import { CRYPT_DEFAULTS } from './defaults.js';
 
 /** Options for the crypt API. */
 export interface CryptOptions extends Omit<KeyDerivationOptions, 'instance'> {
+  /** The cipher algorithm. */
+  encAlg: string;
+
   /** The nonce A.K.A. initialization vector (IV). */
   nonce: Uint8Array<ArrayBuffer>;
 }

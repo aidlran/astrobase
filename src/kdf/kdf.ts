@@ -3,9 +3,6 @@ import { getOrThrow, type Instance } from '../instance/instance.js';
 import type { MaybePromise } from '../internal/maybe-promise.js';
 
 export interface KeyDerivationOptions extends Partial<GetPrivateKeyOptions> {
-  /** The encryption algorithm. */
-  encAlg: string;
-
   /** The hashing algorithm used for key derivation. */
   hashAlg: string;
 
