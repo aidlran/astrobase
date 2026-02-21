@@ -38,6 +38,8 @@ export * from './rpc/client/index.js';
 export * from './rpc/server/server.js';
 export * from './rpc/shared/index.js';
 export * from './s3/s3.js';
+export * from './signatures/ecdsa.js';
+export * from './signatures/index.js';
 export * from './sqlite/sqlite.js';
 export * from './varint/varint.js';
 export * from './wraps/index.js';

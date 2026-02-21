@@ -16,7 +16,7 @@ export async function wrap(
 ): Promise<Uint8Array<ArrayBuffer>> {
   const { type, value } = unwrapped;
 
-  const { metadata, payload } = await getOrThrow(instance, 'wraps', type).wrap({
+  const { metadata, payload, typeOverride } = await getOrThrow(instance, 'wraps', type).wrap({
     instance,
     metadata: await unwrapped.metadata.getValue(instance),
     payload: value.buffer,
@@ -27,7 +27,7 @@ export async function wrap(
       .setMediaType(unwrapped.metadata.mediaType.value)
       .setValue(metadata, instance),
     payload,
-    type,
+    type: typeOverride ?? type,
   });
 }
 
@@ -44,17 +44,19 @@ export async function unwrap(
 ): Promise<Unwrapped> {
   const wrap = fromWrapBuffer(wrapBuffer);
 
-  const { metadata, payload } = await getOrThrow(instance, 'wraps', wrap.type).unwrap({
-    instance,
-    metadata: await wrap.metadata.getValue(instance),
-    payload: wrap.payload,
-  });
+  const { metadata, payload, typeOverride } = await getOrThrow(instance, 'wraps', wrap.type).unwrap(
+    {
+      instance,
+      metadata: await wrap.metadata.getValue(instance),
+      payload: wrap.payload,
+    },
+  );
 
   return {
     metadata: await new FileBuilder()
       .setMediaType(wrap.metadata.mediaType.value)
       .setValue(metadata, instance),
-    type: wrap.type,
+    type: typeOverride ?? wrap.type,
     value: new FileBuilder(payload),
   };
 }

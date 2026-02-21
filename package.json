@@ -172,6 +172,14 @@
       "types": "./dist/s3/s3.d.ts",
       "default": "./dist/s3/s3.js"
     },
+    "./signatures": {
+      "types": "./dist/signatures/index.d.ts",
+      "default": "./dist/signatures/index.js"
+    },
+    "./signatures/ecdsa": {
+      "types": "./dist/signatures/ecdsa.d.ts",
+      "default": "./dist/signatures/ecdsa.js"
+    },
     "./sqlite": {
       "types": "./dist/sqlite/sqlite.d.ts",
       "default": "./dist/sqlite/sqlite.js"
@@ -223,7 +231,7 @@
     "varint": "6.0.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.980.0",
+    "@aws-sdk/client-s3": "^3.995.0",
     "@bitcoinerlab/secp256k1": "^1.2.0",
     "@eslint/js": "^9.39.2",
     "@noble/ciphers": "^2.1.1",
@@ -244,9 +252,9 @@
     "prettier": "^3.8.1",
     "prettier-plugin-jsdoc": "^1.8.0",
     "publint": "^0.3.17",
-    "typedoc": "^0.28.16",
+    "typedoc": "^0.28.17",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.54.0",
+    "typescript-eslint": "^8.56.0",
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
@@ -262,6 +270,9 @@
       "optional": true
     },
     "@bitcoinerlab/secp256k1": {
+      "optional": true
+    },
+    "@noble/ciphers": {
       "optional": true
     },
     "@noble/secp256k1": {

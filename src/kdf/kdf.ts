@@ -39,9 +39,8 @@ export interface KeyDerivationOptions extends Partial<GetPrivateKeyOptions> {
 
 /**
  * Derives a symmetric encryption key using the given options. Requires a key derivation input to be
- * provided - one of {@link CryptOptions.key}, {@link CryptOptions.passphrase} or
- * {@link CryptOptions.publicKey}. If `publickey` is provided, then the Identity's private key must
- * be available in the Keyring.
+ * provided - one of `key`, `passphrase` or `publicKey`. If `publickey` is provided, then the
+ * Identity's private key must be available in the active Keyring.
  *
  * The promise will error if no key derivation input is provided or if key derivation fails.
  *

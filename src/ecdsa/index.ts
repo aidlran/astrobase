@@ -1,4 +1,7 @@
-/** @module ECDSA */
+/**
+ * @module ECDSA
+ *
+ * @deprecated
+ */
 
-export * from './ecdsa.js';
 export * from './wrap.js';

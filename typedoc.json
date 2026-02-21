@@ -1,5 +1,5 @@
 {
-  "$schema": "https://typedoc.org/schema.json",
+  "$schema": "./node_modules/typedoc/typedoc-config.schema.json",
   "entryPoints": [
     "./src/ascii/ascii.ts",
     "./src/bip39/bip39.ts",
@@ -37,6 +37,8 @@
     "./src/rpc/server/server.ts",
     "./src/rpc/shared/index.ts",
     "./src/s3/s3.ts",
+    "./src/signatures/ecdsa.ts",
+    "./src/signatures/index.ts",
     "./src/sqlite/sqlite.ts",
     "./src/varint/varint.ts",
     "./src/wraps/index.ts"

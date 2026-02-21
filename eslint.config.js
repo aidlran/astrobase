@@ -37,4 +37,10 @@ export default defineConfig(
       'prettier/prettier': 'warn',
     },
   },
+  {
+    files: ['**/*.test.ts'],
+    rules: {
+      '@typescript-eslint/no-deprecated': 'off',
+    },
+  },
 );

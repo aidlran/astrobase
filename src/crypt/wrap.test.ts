@@ -5,6 +5,7 @@ import { putIdentity } from '../identity/identity.js';
 import { createInstance } from '../instance/instance.js';
 import { WithWebCryptoKDF } from '../kdf/web-crypto.js';
 import { createInstanceWithLoadedKeyring } from '../keyrings/testing/utils.js';
+import { WithECDSA } from '../signatures/ecdsa.js';
 import * as Crypt from './index.js';
 import { WithWebCryptoCrypt } from './web-crypto.js';
 
@@ -108,7 +109,7 @@ describe('Encrypt Wrap', () => {
     });
 
     it('Works if known public key provided', async () => {
-      const instance = await createInstanceWithLoadedKeyring();
+      const instance = await createInstanceWithLoadedKeyring(WithECDSA);
 
       const identityCID = await putIdentity({
         id: 'test',

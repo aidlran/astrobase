@@ -10,11 +10,12 @@ import { instance, maxLength, nonEmpty, pipe, regex, safeParse, strictObject, st
 // prettier-ignore
 import { ContentIdentifier, type ContentIdentifierLike, type ContentIdentifierSchemeParser } from '../cid/cid.js';
 import { getContent, putContent } from '../content/api.js';
-import type { ECDSAUnwrappedMetadata } from '../ecdsa/wrap.js';
 import { FileBuilder } from '../file/file-builder.js';
+import { SHA_256 } from '../hashing/algorithms/sha256.js';
 import type { Instance } from '../instance/instance.js';
 import { compareBytes } from '../internal/encoding.js';
 import { activeSeeds } from '../keyrings/keyrings.js';
+import type { UnwrappedSignature } from '../signatures/wrap.js';
 import { unwrap, wrap } from '../wraps/wraps.js';
 
 /** Parsed identity content. */
@@ -179,24 +180,24 @@ export async function putIdentity(options: PutIdentityOptions) {
   const { id, instance, ref } = options;
   const account = getAccount(instance);
 
-  let pubKey!: Uint8Array;
+  let publicKey!: Uint8Array<ArrayBuffer>;
   let targetCID: ContentIdentifier | undefined;
 
   for (let i = 0, lookahead = 0; lookahead < (options.lookaheadLimit ?? 20); i++) {
-    const { publicKey } = account.derive(i);
-    const derivationCID = new ContentIdentifier(prefix, publicKey);
-    const identity = await getContent<Identity>(derivationCID, instance);
-    if (identity) {
-      if (identity.id === id) {
-        pubKey = publicKey;
-        targetCID = derivationCID;
+    const derivedPub = new Uint8Array(account.derive(i).publicKey);
+    const derivedCID = new ContentIdentifier(prefix, derivedPub);
+    const derivedID = await getContent<Identity>(derivedCID, instance);
+    if (derivedID) {
+      if (derivedID.id === id) {
+        publicKey = derivedPub;
+        targetCID = derivedCID;
         break;
       }
       lookahead = 0;
     } else if (++lookahead == 1) {
       // If the lookahead limit is reached without a match, we'll use the first available
-      pubKey = publicKey;
-      targetCID = derivationCID;
+      publicKey = derivedPub;
+      targetCID = derivedCID;
     }
   }
 
@@ -204,10 +205,10 @@ export async function putIdentity(options: PutIdentityOptions) {
     await putContent(
       targetCID,
       await wrap(instance, {
-        metadata: await new FileBuilder<ECDSAUnwrappedMetadata>()
+        metadata: await new FileBuilder<UnwrappedSignature[]>()
           .setMediaType('application/json')
-          .setValue(pubKey, instance),
-        type: 'ECDSA',
+          .setValue([{ hashAlg: SHA_256, publicKey, sigAlg: 'ecdsa' }], instance),
+        type: 'sig',
         value: await new FileBuilder<Identity>()
           .setMediaType('application/json')
           .setValue({ id, ref: new ContentIdentifier(ref) }, instance),
@@ -222,11 +223,11 @@ export async function putIdentity(options: PutIdentityOptions) {
 /** The identity {@link ContentIdentifierSchemeParser}. */
 export const scheme: ContentIdentifierSchemeParser<Identity> = async (cid, content, instance) => {
   const { metadata, type, value } = await unwrap(instance, content);
-  const wrapPubKey = await metadata.getValue(instance);
+  if (type !== 'sig') return;
+  const unwrappedSig = (await metadata.getValue(instance)) as UnwrappedSignature[];
   if (
-    type === 'ECDSA' &&
-    wrapPubKey instanceof Uint8Array &&
-    compareBytes(wrapPubKey, new Uint8Array(cid.value))
+    Array.isArray(unwrappedSig) &&
+    unwrappedSig.some(({ publicKey }) => compareBytes(publicKey, new Uint8Array(cid.value)))
   ) {
     const parse = safeParse(schema, await value.getValue(instance));
     return parse.success ? parse.output : undefined;

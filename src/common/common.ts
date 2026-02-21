@@ -4,36 +4,37 @@ import { BinaryCodec } from '../codecs/binary/binary.js';
 import { JsonCodec } from '../codecs/json/json.js';
 import { deleteContent, getContent, putContent } from '../content/api.js';
 import type { PutRequestPayload } from '../content/procedures.js';
-import { ECDSA } from '../ecdsa/wrap.js';
 import { CryptWrapModule } from '../crypt/index.js';
 import { parseAsFile } from '../file/parse.js';
 import { SHA_256, sha256 } from '../hashing/algorithms/sha256.js';
 import { prefix as identityPrefix, scheme as identityScheme } from '../identity/identity.js';
 import { Immutable, IMMUTABLE_PREFIX } from '../immutable/index.js';
-import type { InstanceConfig } from '../instance/instance.js';
+import { createInstance } from '../instance/instance.js';
 import { Binary, JSON as JsonMediaType, Wrap } from '../media-types/media-types.js';
 import { MUTABLE_PREFIX } from '../mutable/mutable.js';
+import { WithSignatureWraps } from '../signatures/wrap.js';
 import { WrapCodec } from '../wraps/codec.js';
 
 /**
- * A base {@link InstanceConfig} that provides implementations for all supported codecs, procedure
- * handlers, hash algorithms, content identifier schemes, and wrap types.
+ * A base instance config that provides implementations for many built-ins.
  *
  * This design enables a "batteries included" experience with minimal configuration, while also
- * allowing unparalleled tree-shakability and customisation. Most applications will use the common
- * config as a base, with additional configs extending or even overriding features. In special cases
- * the config can not be imported into the application at all, instead allowing a custom
- * configuration to load only the functionality needed and leaving base functionality to be
- * tree-shaken.
+ * allowing unparalleled tree-shakability and customisation. Many applications can use this config
+ * as a base, with additional configs extending or even overriding features. In special cases, the
+ * config can not be imported into the application at all, instead allowing a custom configuration
+ * to load only the functionality needed and leaving base functionality to be tree-shaken away.
  *
  * @example
  *
  *     import { Common } from '@astrobase/sdk/common';
  *     import { createInstance } from '@astrobase/sdk/instance';
  *
- *     const instance = createInstance(Common);
+ *     const instance = createInstance(
+ *       Common,
+ *       // additional functionality
+ *     );
  */
-export const Common = {
+export const Common = createInstance(WithSignatureWraps, {
   codecs: {
     [JsonMediaType]: JsonCodec,
     [Binary]: BinaryCodec,
@@ -54,7 +55,6 @@ export const Common = {
     [identityPrefix]: identityScheme,
   },
   wraps: {
-    ECDSA,
     crypt: CryptWrapModule,
   },
-} satisfies InstanceConfig;
+});

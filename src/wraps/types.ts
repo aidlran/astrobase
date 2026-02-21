@@ -2,20 +2,28 @@ import type { FileBuilder } from '../file/file-builder.js';
 import type { Instance } from '../instance/instance.js';
 import type { MaybePromise } from '../internal/index.js';
 
-/** A Wrap function that either wraps or unwraps the input. */
-export type WrapFn<TInputMetadata, TOutputMetadata> = (config: {
+export interface WrapFnContext<TMetadata> {
   /** The instance config. */
   instance: Instance;
   /** The metadata. */
-  metadata: TInputMetadata;
+  metadata: TMetadata;
   /** The input value. */
   payload: Uint8Array<ArrayBuffer>;
-}) => MaybePromise<{
+}
+
+export interface WrapFnResult<TMetadata> {
   /** Metadata for the processed value. */
-  metadata: TOutputMetadata;
+  metadata: TMetadata;
   /** The processed value. */
   payload: Uint8Array<ArrayBuffer>;
-}>;
+  /** If set, overrides the returned wrap type. Used only for migrating/upgrading legacy wrap types. */
+  typeOverride?: string;
+}
+
+/** A Wrap function that either wraps or unwraps the input. */
+export type WrapFn<TInputMetadata, TOutputMetadata> = (
+  context: WrapFnContext<TInputMetadata>,
+) => MaybePromise<WrapFnResult<TOutputMetadata>>;
 
 /** A module provided to the Instance config that implements a strategy for a Wrap type. */
 export interface WrapModule<TWrappedMetadata, TUnwrappedMetadata> {

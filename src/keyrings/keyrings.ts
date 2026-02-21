@@ -6,8 +6,7 @@
 import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from '../bip39/bip39.js';
 import { ContentIdentifier, type ContentIdentifierLike } from '../cid/cid.js';
 import { deleteContent, getContent } from '../content/api.js';
-import { cryptOptions, type CryptOptions } from '../crypt/options.js';
-import type { CryptWrapMetadata } from '../crypt/wrap.js';
+import { cryptOptions, type CryptOptions, type CryptOptionsSanitized } from '../crypt/options.js';
 import { FileBuilder } from '../file/file-builder.js';
 import { putImmutable } from '../immutable/repository.js';
 import type { Instance } from '../instance/instance.js';
@@ -83,12 +82,10 @@ export async function loadKeyring<T>(instance: Instance, request: T.LoadKeyringR
 
   const keyring = (await keyringFile.getValue(instance)) as PersistedKeyring<T>;
 
-  // Splice in metadata passphrase and default for back compat
+  // Splice in metadata passphrase
   const wrap = fromWrapBuffer(keyring.payload);
   const cryptOptions: CryptOptions = {
-    // @ts-expect-error - For back compat; will be removed
-    keyLen: 32,
-    ...((await wrap.metadata.getValue(instance)) as CryptWrapMetadata),
+    ...((await wrap.metadata.getValue(instance)) as CryptOptionsSanitized),
     passphrase: request.passphrase,
   };
   await wrap.metadata.setValue(cryptOptions, instance);

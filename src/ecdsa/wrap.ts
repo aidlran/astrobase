@@ -1,30 +1,52 @@
-import type { WrapModule } from '../wraps/types.js';
-import { sign, verify } from './ecdsa.js';
+/* eslint-disable @typescript-eslint/no-deprecated */
 
-/** The public key of the key pair for the signature. */
-export type ECDSAUnwrappedMetadata = Uint8Array;
+import { SHA_256 } from '../hashing/index.js';
+import type { InstanceConfig } from '../instance/instance.js';
+import { unwrapSignatures, type UnwrappedSignature } from '../signatures/wrap.js';
+import type { WrapFn, WrapModule } from '../wraps/types.js';
 
-/** Metadata required to validate signature. */
+/** The metadata of an `ECDSA` type wrap. */
 export interface ECDSAWrappedMetadata {
-  /** Public key. */
-  pub: Uint8Array;
-  /** Signature. */
-  sig: Uint8Array;
+  /** The public key bytes of the identity that created the signature. */
+  pub: Uint8Array<ArrayBuffer>;
+  /** The signature bytes. */
+  sig: Uint8Array<ArrayBuffer>;
 }
 
-/** A Wrap implementation for ECDSA signatures. */
-export const ECDSA: WrapModule<ECDSAWrappedMetadata, ECDSAUnwrappedMetadata> = {
-  async unwrap({ instance, metadata, payload }) {
-    if (!(await verify(instance, payload, metadata.sig, metadata.pub))) {
-      throw new Error('ECDSA signature failed to verify');
-    }
-    return { metadata: metadata.pub, payload };
-  },
-  wrap: async ({ instance, metadata, payload }) => ({
-    metadata: {
-      sig: await sign(instance, payload, metadata),
-      pub: metadata,
-    },
+/**
+ * @deprecated Provided for back-compat to unwrap and migrate `ECDSA` type wraps. New & existing
+ *   projects should create `sig` type wraps with `@astrobase/sdk/signatures`.
+ */
+export const unwrapECDSA: WrapFn<ECDSAWrappedMetadata, UnwrappedSignature[]> = async ({
+  instance,
+  metadata: { pub, sig },
+  payload,
+}) => ({
+  ...(await unwrapSignatures({
+    instance,
+    metadata: [{ a: 'ecdsa', h: SHA_256, p: pub, s: sig }],
     payload,
-  }),
-};
+  })),
+  typeOverride: 'sig',
+});
+
+/**
+ * A Wrap implementation for ECDSA signatures.
+ *
+ * @deprecated Provided for back-compat to unwrap and migrate `ECDSA` type wraps. New & existing
+ *   projects should create `sig` type wraps with `@astrobase/sdk/signatures`.
+ */
+export const ECDSA = {
+  unwrap: unwrapECDSA,
+  wrap() {
+    throw Error('ECDSA type wrap creation no longer supported');
+  },
+} satisfies WrapModule<ECDSAWrappedMetadata, UnwrappedSignature[]>;
+
+/**
+ * Provides a Wrap implementation for ECDSA signatures.
+ *
+ * @deprecated Provided for back-compat to unwrap and migrate `ECDSA` type wraps. New & existing
+ *   projects should create `sig` type wraps with `@astrobase/sdk/signatures`.
+ */
+export const WithEcdsaWrap = { wraps: { ECDSA } } satisfies InstanceConfig;

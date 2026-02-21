@@ -10,6 +10,7 @@ import type { HashFn } from '../hashing/types.js';
 import type { KeyDerivationFn } from '../kdf/kdf.js';
 import type { Middleware } from '../middleware/types.js';
 import type { ProcedureExecutor } from '../rpc/server/server.js';
+import type { SignatureModule } from '../signatures/modules.js';
 import type { WrapModule } from '../wraps/types.js';
 
 /**
@@ -41,6 +42,9 @@ export interface InstanceConfig {
   /** A dict of content identifier scheme keys & scheme parser values. */
   schemes?: Partial<Record<string, ContentIdentifierSchemeParser<unknown>>>;
 
+  /** A dict of cryptographic signature algorithm identifiers & their implementations. */
+  sigAlgs?: Partial<Record<string, SignatureModule>>;
+
   /** A dict of wrap name keys & wrap implementation values. */
   wraps?: Partial<Record<string, WrapModule<any, any>>>;
 }
@@ -59,6 +63,7 @@ export const dicts = [
   'kdf',
   'procedures',
   'schemes',
+  'sigAlgs',
   'wraps',
 ] as const satisfies InstanceFeature[];
 
