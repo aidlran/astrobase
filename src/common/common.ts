@@ -5,10 +5,10 @@ import { JsonCodec } from '../codecs/json/json.js';
 import { deleteContent, getContent, putContent } from '../content/api.js';
 import type { PutRequestPayload } from '../content/procedures.js';
 import { CryptWrapModule } from '../crypt/index.js';
-import { parseAsFile } from '../file/parse.js';
+import { fileScheme } from '../file/parse.js';
 import { SHA_256, sha256 } from '../hashing/algorithms/sha256.js';
-import { prefix as identityPrefix, scheme as identityScheme } from '../identity/identity.js';
-import { Immutable, IMMUTABLE_PREFIX } from '../immutable/index.js';
+import { identityPrefix, identityScheme } from '../identity/identity.js';
+import { immutableScheme, IMMUTABLE_PREFIX } from '../immutable/index.js';
 import { createInstance } from '../instance/instance.js';
 import { Binary, JSON as JsonMediaType, Wrap } from '../media-types/media-types.js';
 import { MUTABLE_PREFIX } from '../mutable/mutable.js';
@@ -50,8 +50,8 @@ export const Common = createInstance(WithSignatureWraps, {
       putContent((req as PutRequestPayload).cid, (req as PutRequestPayload).content, { instance }),
   },
   schemes: {
-    [IMMUTABLE_PREFIX]: Immutable,
-    [MUTABLE_PREFIX]: parseAsFile,
+    [IMMUTABLE_PREFIX]: immutableScheme,
+    [MUTABLE_PREFIX]: fileScheme,
     [identityPrefix]: identityScheme,
   },
   wraps: {

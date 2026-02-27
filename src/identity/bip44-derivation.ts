@@ -20,7 +20,7 @@ import type { UnwrappedSignature } from '../signatures/wrap.js';
 import { wrap } from '../wraps/wraps.js';
 import type { DeriveIdentityKeysOptions, PutIdentityOptions } from './derivation.js';
 import type { GetPrivateKeyFn } from './get-private-key.js';
-import { prefix, type Identity } from './identity.js';
+import { identityPrefix, type Identity } from './identity.js';
 
 /** Derives the BIP44 account for the loaded keyring. */
 function getAccount(instance: Instance) {
@@ -85,7 +85,7 @@ export async function getNextIdentity(
 
   for (let i = 0; i < limit; i++) {
     const { publicKey } = account.derive(i);
-    const cid = new ContentIdentifier(prefix, publicKey);
+    const cid = new ContentIdentifier(identityPrefix, publicKey);
     const identity = await getContent<Identity>(cid, instance);
     if (!identity) {
       return { cid, index: i };
@@ -114,7 +114,7 @@ export async function getIdentityBIP44(
 
   for (let i = 0, lookahead = 0; lookahead < 20; i++) {
     const derivation = account.derive(i);
-    const cid = new ContentIdentifier(prefix, derivation.publicKey);
+    const cid = new ContentIdentifier(identityPrefix, derivation.publicKey);
     const identity = await getContent<Identity>(cid, options.instance);
     if (identity) {
       if (identity.id === options.id) {
@@ -149,7 +149,7 @@ export async function putIdentityBIP44(options: PutIdentityOptions) {
 
   for (let i = 0, lookahead = 0; lookahead < 20; i++) {
     const derivedPub = new Uint8Array(account.derive(i).publicKey);
-    const derivedCID = new ContentIdentifier(prefix, derivedPub);
+    const derivedCID = new ContentIdentifier(identityPrefix, derivedPub);
     const derivedID = await getContent<Identity>(derivedCID, instance);
     if (derivedID) {
       if (derivedID.id === id) {

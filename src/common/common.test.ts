@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { SHA_256 } from '../hashing/index.js';
-import { prefix as identityPrefix } from '../identity/identity.js';
+import { identityPrefix } from '../identity/identity.js';
 import { IMMUTABLE_PREFIX } from '../immutable/repository.js';
 import { getOrThrow } from '../instance/instance.js';
 import { Binary, JSON, Wrap } from '../media-types/media-types.js';

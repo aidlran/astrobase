@@ -1,6 +1,7 @@
 // prettier-ignore
 import { instance, maxLength, nonEmpty, pipe, regex, safeParse, strictObject, string } from 'valibot';
-import { ContentIdentifier, type ContentIdentifierSchemeParser } from '../cid/cid.js';
+import { ContentIdentifier } from '../cid/cid.js';
+import { contentScheme } from '../content/content-scheme.js';
 import { compareBytes } from '../internal/encoding.js';
 import type { UnwrappedSignature } from '../signatures/wrap.js';
 import { unwrap } from '../wraps/wraps.js';
@@ -20,18 +21,16 @@ export interface Identity {
 }
 
 /** The content identifier prefix for identity. */
-export const prefix = '$pub';
+export const identityPrefix = '$pub';
 
 /** The Valibot schema for identity content. */
-export const schema = strictObject({
-  /** @ignore */
+export const identitySchema = strictObject({
   id: pipe(string(), nonEmpty(), maxLength(100), regex(/^[a-z0-9-]+$/)),
-  /** @ignore */
   ref: instance(ContentIdentifier),
 });
 
-/** The identity {@link ContentIdentifierSchemeParser}. */
-export const scheme: ContentIdentifierSchemeParser<Identity> = async (cid, content, instance) => {
+/** Handles the identity (`$pub`) content scheme. */
+export const identityScheme = contentScheme<Identity>(async (cid, content, instance) => {
   const { metadata, type, value } = await unwrap(instance, content);
   if (type !== 'sig') return;
   const unwrappedSig = (await metadata.getValue(instance)) as UnwrappedSignature[];
@@ -39,7 +38,7 @@ export const scheme: ContentIdentifierSchemeParser<Identity> = async (cid, conte
     Array.isArray(unwrappedSig) &&
     unwrappedSig.some(({ publicKey }) => compareBytes(publicKey, new Uint8Array(cid.value)))
   ) {
-    const parse = safeParse(schema, await value.getValue(instance));
+    const parse = safeParse(identitySchema, await value.getValue(instance));
     return parse.success ? parse.output : undefined;
   }
-};
+});

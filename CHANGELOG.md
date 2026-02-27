@@ -14,6 +14,11 @@
 
 - Changed `@astrobase/sdk/bip39/wordlist/english` to be JavaScript rather than JSON.
 
+#### CID
+
+- Narrowed `ContentIdentifier.value` to always be a `Uint8Array`.
+- Removed `ContentIdentifierSchemeParser`.
+
 #### Common
 
 - Removed `ECDSA` type wrap from `Common`. Existing projects can add `WithEcdsaWrap` to their
@@ -64,6 +69,14 @@
   );
   ```
 
+- Renamed `prefix` to `identityPrefix`.
+- Renamed `schema` to `identitySchema`.
+- Renamed `scheme` to `identityScheme`.
+
+#### Immutable
+
+- Renamed `Immutable` to `immutableScheme`.
+
 #### Instance
 
 - Renamed `maps` to `dicts`.
@@ -88,6 +101,11 @@
 #### Common
 
 - Added `sig` type wrap.
+
+#### Content
+
+- Expanded content scheme API.
+- Added support for on optional content scheme reducer function.
 
 #### Crypt
 

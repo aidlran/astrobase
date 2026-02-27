@@ -16,17 +16,17 @@ describe('ContentIdentifier class', () => {
           const cid = new ContentIdentifier(string);
           expect(cid.toString()).toBe(string.toLowerCase());
           expect(cid.prefix).toBe(prefix.toLowerCase());
-          expect(cid.value).toEqual(bech32m.fromWords(words));
+          expect(cid.value).toEqual(new Uint8Array(bech32m.fromWords(words)));
 
           const cid2 = new ContentIdentifier(cid);
           expect(cid2.toString()).toBe(string.toLowerCase());
           expect(cid2.prefix).toBe(prefix.toLowerCase());
-          expect(cid2.value).toEqual(bech32m.fromWords(words));
+          expect(cid2.value).toEqual(new Uint8Array(bech32m.fromWords(words)));
 
           const cid3 = new ContentIdentifier(prefix, bech32m.fromWords(words));
           expect(cid3.toString()).toBe(string.toLowerCase());
           expect(cid3.prefix).toBe(prefix.toLowerCase());
-          expect(cid3.value).toEqual(bech32m.fromWords(words));
+          expect(cid3.value).toEqual(new Uint8Array(bech32m.fromWords(words)));
         }),
     ));
 

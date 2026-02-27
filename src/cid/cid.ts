@@ -1,24 +1,9 @@
-/** @module CID */
+/**
+ * @module CID
+ * @experimental
+ */
 
 import { bech32m } from 'bech32';
-import type { Instance } from '../instance/instance.js';
-import type { MaybePromise } from '../internal/index.js';
-
-/**
- * A handler function for parsing and validating a content identifier and content buffer pair.
- *
- * @template T The type returned after a successful parse.
- * @param identifier The {@link ContentIdentifier}.
- * @param content The content buffer.
- * @param instance The instance where the function was called.
- * @returns The parsed value or a promise that resolves with the parsed value. If performing some
- *   validation which fails, instead return `undefined`.
- */
-export type ContentIdentifierSchemeParser<T> = (
-  identifier: ContentIdentifier,
-  content: Uint8Array<ArrayBuffer>,
-  instance: Instance,
-) => MaybePromise<T | undefined>;
 
 /** A valid content identifier value. */
 export type ContentIdentifierLike = string | ContentIdentifier;
@@ -27,7 +12,7 @@ export type ContentIdentifierLike = string | ContentIdentifier;
 export class ContentIdentifier {
   private _identifier: string;
   private _prefix: string;
-  private _value: ArrayLike<number>;
+  private _value: Uint8Array<ArrayBuffer>;
 
   constructor(identifierOrPrefix: ContentIdentifierLike, value?: ArrayLike<number>) {
     if (identifierOrPrefix instanceof ContentIdentifier) {
@@ -37,12 +22,12 @@ export class ContentIdentifier {
     } else if (value) {
       this._identifier = bech32m.encode(identifierOrPrefix, bech32m.toWords(value));
       this._prefix = identifierOrPrefix.toLowerCase();
-      this._value = value;
+      this._value = new Uint8Array(value);
     } else {
       const { prefix, words } = bech32m.decode(identifierOrPrefix);
       this._identifier = identifierOrPrefix.toLowerCase();
       this._prefix = prefix;
-      this._value = bech32m.fromWords(words);
+      this._value = new Uint8Array(bech32m.fromWords(words));
     }
   }
 

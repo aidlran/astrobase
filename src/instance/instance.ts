@@ -3,8 +3,8 @@
  * @experimental
  */
 
-import type { ContentIdentifierSchemeParser } from '../cid/cid.js';
 import type { Codec } from '../codecs/codecs.js';
+import type { ContentScheme } from '../content/content-scheme.js';
 import type { CryptModule } from '../crypt/index.js';
 import type { HashFn } from '../hashing/types.js';
 import type { HmacFn } from '../hmac/api.js';
@@ -47,7 +47,7 @@ export interface InstanceConfig {
   procedures?: { [K in string]?: ProcedureExecutor<any, any> };
 
   /** A dict of content identifier scheme keys & scheme parser values. */
-  schemes?: { [K in string]?: ContentIdentifierSchemeParser<unknown> };
+  schemes?: { [K in string]?: ContentScheme<any> };
 
   /** A dict of cryptographic signature algorithm identifiers & their implementations. */
   sigAlgs?: { [K in string]?: SignatureModule };

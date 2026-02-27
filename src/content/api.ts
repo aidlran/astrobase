@@ -1,10 +1,10 @@
-// prettier-ignore
-import { ContentIdentifier, type ContentIdentifierLike, type ContentIdentifierSchemeParser } from '../cid/cid.js';
-import type { ContentProcedures } from './procedures.js';
+import { ContentIdentifier, type ContentIdentifierLike } from '../cid/cid.js';
 import { getOrThrow, type Instance } from '../instance/instance.js';
 import { payloadToBytes } from '../internal/encoding.js';
 // prettier-ignore
 import { buildQueue, callProcedure, callProcedureAll, filterByProcedure } from '../rpc/client/index.js';
+import type { ContentScheme } from './content-scheme.js';
+import type { ContentProcedures } from './procedures.js';
 
 /**
  * Invokes the `content:delete` procedure via all clients that support it.
@@ -20,32 +20,86 @@ export async function deleteContent(cid: ContentIdentifierLike, instance: Instan
 }
 
 /**
- * Retrieves an item of content.
+ * Retrieves an item of content, querying available clients and parsing the content bytes according
+ * to a {@link ContentScheme}. Depending on the content scheme implementation (whether it includes a
+ * reducer function), this is handled in two different modes:
+ *
+ * - **First Mode:** If the content scheme implementation **does not** have a reducer, then a
+ *   mechanism similar to `Promise.race` is used to query groups of clients asynchronously in
+ *   priority order. However, rather than returning the first resolved promise, it additionally
+ *   validates and parses the content, thereby returning the first resolved promise **with a valid
+ *   result**. This works well for immutable content, where there is only 1 possible permutation of
+ *   valid content. It can return early and avoid querying all clients, which means maintaining a
+ *   high priority cache becomes very effective.
+ * - **Reduce Mode:** If the content scheme implementation **does** have a reducer, then all clients
+ *   are queried and parsed asynchronously, and all valid content values are collected and passed
+ *   the the reducer, which returns the final content. This supports mutable content schemes where
+ *   there can be more than one possible permutation of valid content - the reducer can choose the
+ *   most authoritative one.
  *
  * @template T The type of the content after being parsed.
  * @param cid A valid {@link ContentIdentifierLike} value.
  * @param instance The instance to use for this request.
+ * @param overrideContentScheme An optional {@link ContentScheme} override to use.
  * @returns A promise that resolves with the parsed content, or `undefined` if nothing acceptable
  *   was found.
  */
-export function getContent<T>(cid: ContentIdentifierLike, instance: Instance) {
-  return new Promise<T | undefined>((resolve) => {
-    cid = new ContentIdentifier(cid);
-    const schemeParser = getOrThrow(
-      instance,
-      'schemes',
-      cid.prefix,
-    ) as ContentIdentifierSchemeParser<T>;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const queue = buildQueue<ContentProcedures>(filterByProcedure(instance.clients, 'content:get'));
+export async function getContent<T>(
+  cid: ContentIdentifierLike,
+  instance: Instance,
+  overrideContentScheme?: ContentScheme<T>,
+) {
+  cid = new ContentIdentifier(cid);
 
-    if (!queue.length) {
-      resolve(undefined);
+  const scheme = (overrideContentScheme ??
+    getOrThrow(instance, 'schemes', cid.prefix)) as ContentScheme<T>;
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const filteredClients = filterByProcedure(instance.clients, 'content:get');
+
+  if (!filteredClients.length) {
+    return;
+  }
+
+  if (scheme.reduce) {
+    const all = (
+      await Promise.all(
+        filteredClients.map(async (client) => {
+          try {
+            const content = await callProcedure<ContentProcedures, 'content:get'>(
+              instance,
+              client.strategy,
+              'content:get',
+              cid,
+            );
+
+            if (content) {
+              return await scheme.parse(cid, new Uint8Array(content), instance);
+            }
+          } catch {
+            /* empty */
+          }
+        }),
+      )
+    ).filter((result) => result !== undefined && result !== null);
+
+    switch (all.length) {
+      case 0:
+        return;
+      case 1:
+        return all[0];
+      default:
+        return scheme.reduce(cid, all, instance);
     }
+  }
 
-    let todo = queue.reduce((count, next) => count + next.length, 0);
-    let resolved = false;
+  const queue = buildQueue<ContentProcedures>(filteredClients);
 
+  let todo = queue.reduce((count, next) => count + next.length, 0);
+  let resolved = false;
+
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise<T | undefined>(async (resolve) => {
     const handleNull = () => {
       if (--todo == 0 && !resolved) {
         resolve(undefined);
@@ -53,25 +107,27 @@ export function getContent<T>(cid: ContentIdentifierLike, instance: Instance) {
     };
 
     for (const group of queue) {
-      for (const strategy of group) {
-        callProcedure(instance, strategy, 'content:get', cid)
-          .then((content) => {
-            if (content) {
-              return schemeParser(cid as ContentIdentifier, new Uint8Array(content), instance);
-            }
-          })
-          .then((content) => {
-            if (!resolved) {
-              if (content === undefined || content === null) {
-                handleNull();
-              } else {
-                resolved = true;
-                resolve(content);
+      await Promise.allSettled(
+        group.map(async (strategy) =>
+          callProcedure(instance, strategy, 'content:get', cid)
+            .then((content) => {
+              if (content) {
+                return scheme.parse(cid, new Uint8Array(content), instance);
               }
-            }
-          })
-          .catch(handleNull);
-      }
+            })
+            .then((content) => {
+              if (!resolved) {
+                if (content === undefined || content === null) {
+                  handleNull();
+                } else {
+                  resolved = true;
+                  resolve(content);
+                }
+              }
+            })
+            .catch(handleNull),
+        ),
+      );
     }
   });
 }
@@ -105,10 +161,13 @@ export async function putContent(
   cid = new ContentIdentifier(cid);
   const contentBuf = payloadToBytes(content);
   if (options.validate ?? true) {
-    const schemeParser = getOrThrow(options.instance, 'schemes', cid.prefix);
-    const parsed = await Promise.resolve(schemeParser(cid, contentBuf, options.instance)).catch(
-      () => undefined,
-    );
+    const scheme = getOrThrow(options.instance, 'schemes', cid.prefix);
+    let parsed: unknown;
+    try {
+      parsed = await scheme.parse(cid, contentBuf, options.instance);
+    } catch {
+      // fallthrough
+    }
     if (parsed === undefined || parsed === null) {
       throw new TypeError('Content failed validation');
     }

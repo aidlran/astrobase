@@ -9,7 +9,7 @@ import { activeSeeds } from '../keyrings/keyrings.js';
 import type { UnwrappedSignature } from '../signatures/wrap.js';
 import { wrap } from '../wraps/wraps.js';
 import type { GetPrivateKeyFn } from './get-private-key.js';
-import { prefix, type Identity } from './identity.js';
+import { identityPrefix, type Identity } from './identity.js';
 
 /** Known public keys mapped to their identity ID. */
 const lookup: { [K in string]?: string } = {};
@@ -88,7 +88,7 @@ export interface GetIdentityResult {
 /** Retrieves an identity. */
 export async function getIdentity(options: DeriveIdentityKeysOptions): Promise<GetIdentityResult> {
   const { publicKey } = await deriveIdentityKeys(options);
-  const cid = new ContentIdentifier(prefix, publicKey);
+  const cid = new ContentIdentifier(identityPrefix, publicKey);
   const identity = await getContent<Identity>(cid, options.instance);
   return { cid, identity };
 }
@@ -107,7 +107,7 @@ export interface PutIdentityOptions extends DeriveIdentityKeysOptions {
 export async function putIdentity(options: PutIdentityOptions) {
   const { publicKey } = await deriveIdentityKeys(options);
 
-  const cid = new ContentIdentifier(prefix, publicKey);
+  const cid = new ContentIdentifier(identityPrefix, publicKey);
 
   const { id, instance, ref } = options;
 
