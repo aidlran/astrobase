@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.6.0](https://github.com/1coreio/Astrobase/releases/tag/v0.6.0) - 2026-03-08
+## [0.6.0](https://github.com/aidlran/astrobase/releases/tag/v0.6.0) - 2026-03-08
 
 ### Breaking Changes
 
@@ -144,7 +144,7 @@
 
 - Migrated to `pnpm`.
 
-## [0.5.0-beta.2](https://github.com/1coreio/Astrobase/releases/tag/v0.5.0-beta.2) - 2025-06-22
+## [0.5.0-beta.2](https://github.com/aidlran/astrobase/releases/tag/v0.5.0-beta.2) - 2025-06-22
 
 ### Added
 
@@ -159,7 +159,7 @@
 
 - **Identity:** Fixed `putIdentity` not using first available new identity.
 
-## [0.5.0-beta.1](https://github.com/1coreio/Astrobase/releases/tag/v0.5.0-beta.1) - 2025-06-03
+## [0.5.0-beta.1](https://github.com/aidlran/astrobase/releases/tag/v0.5.0-beta.1) - 2025-06-03
 
 > Big update, added a lot of new functionality and redesigned much of the project. As a result, this
 > changelog is probably not exhaustive.
@@ -193,7 +193,7 @@
 - Fixed a rogue conditional `&&` where it should have been `||` while checking for null content in
   `getContent`.
 
-## [0.4.0](https://github.com/1coreio/Astrobase/releases/tag/v0.4.0) - 2024-09-21
+## [0.4.0](https://github.com/aidlran/astrobase/releases/tag/v0.4.0) - 2024-09-21
 
 ### Breaking
 
@@ -211,7 +211,7 @@
 - Added registry for hash functions.
 - Add support for codec-scoped middleware.
 
-## [0.3.1](https://github.com/1coreio/Astrobase/releases/tag/v0.3.1) - 2024-09-11
+## [0.3.1](https://github.com/aidlran/astrobase/releases/tag/v0.3.1) - 2024-09-11
 
 ### Breaking
 
@@ -227,7 +227,7 @@
 - Deprecated usage of `getImmutable` without passing a type parameter.
 - Deprecated `IdentifierRegistry` in favour of `SchemeRegistry`.
 
-## [0.3.0](https://github.com/1coreio/Astrobase/releases/tag/v0.3.0) - 2024-09-10
+## [0.3.0](https://github.com/aidlran/astrobase/releases/tag/v0.3.0) - 2024-09-10
 
 ### Breaking
 
@@ -251,7 +251,7 @@
 
 - Added `ContentIdentifierLike` convenience type.
 
-## [0.2.0](https://github.com/1coreio/Astrobase/releases/tag/v0.2.0) - 2024-09-04
+## [0.2.0](https://github.com/aidlran/astrobase/releases/tag/v0.2.0) - 2024-09-04
 
 :seedling: Initial release as Astrobase.
 

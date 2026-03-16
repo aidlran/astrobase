@@ -10,11 +10,11 @@
   ],
   "homepage": "https://astrobase.me",
   "bugs": {
-    "url": "https://github.com/AstrobaseTech/Astrobase/issues"
+    "url": "https://github.com/aidlran/astrobase/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AstrobaseTech/Astrobase.git"
+    "url": "git+https://github.com/aidlran/astrobase.git"
   },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
