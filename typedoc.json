@@ -1,5 +1,12 @@
 {
   "$schema": "./node_modules/typedoc/typedoc-config.schema.json",
+  "externalSymbolLinkMappings": {
+    "bun-types": {
+      "\"bun:sqlite\".constants.SQLITE_OPEN_CREATE": "#",
+      "\"bun:sqlite\".constants.SQLITE_OPEN_READONLY": "#",
+      "\"bun:sqlite\".constants.SQLITE_OPEN_READWRITE": "#"
+    }
+  },
   "entryPoints": [
     "./src/ascii/ascii.ts",
     "./src/bip39/bip39.ts",
