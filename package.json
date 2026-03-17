@@ -245,7 +245,7 @@
     "varint": "6.0.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.1003.0",
+    "@aws-sdk/client-s3": "^3.1009.0",
     "@bitcoinerlab/secp256k1": "^1.2.0",
     "@eslint/js": "^10.0.1",
     "@noble/ciphers": "^2.1.1",
@@ -254,11 +254,11 @@
     "@types/content-type": "^1.1.9",
     "@types/mime-db": "^1.43.6",
     "@types/varint": "^6.0.3",
-    "@vitest/coverage-v8": "^4.0.18",
-    "better-sqlite3": "^12.6.2",
+    "@vitest/coverage-v8": "^4.1.0",
+    "better-sqlite3": "^12.8.0",
     "bip32": "^5.0.1",
     "concurrently": "^9.2.1",
-    "eslint": "^10.0.2",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "fake-indexeddb": "^6.2.5",
@@ -268,8 +268,8 @@
     "publint": "^0.3.18",
     "typedoc": "^0.28.17",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.56.1",
-    "vitest": "^4.0.18"
+    "typescript-eslint": "^8.57.0",
+    "vitest": "^4.1.0"
   },
   "peerDependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
