@@ -188,9 +188,13 @@
       "types": "./dist/signatures/ecdsa.d.ts",
       "default": "./dist/signatures/ecdsa.js"
     },
-    "./sqlite": {
-      "types": "./dist/sqlite/sqlite.d.ts",
-      "default": "./dist/sqlite/sqlite.js"
+    "./sqlite/better-sqlite3": {
+      "types": "./dist/sqlite/better-sqlite3.d.ts",
+      "default": "./dist/sqlite/better-sqlite3.js"
+    },
+    "./sqlite/bun": {
+      "types": "./dist/sqlite/bun.d.ts",
+      "default": "./dist/sqlite/bun.js"
     },
     "./varint": {
       "types": "./dist/varint/varint.d.ts",
@@ -227,7 +231,9 @@
     "start": "conc -k pnpm:start:*",
     "start:code": "pnpm run build:code -- --watch --preserveWatchOutput ",
     "start:declaration": "pnpm run build:declaration -- --watch --preserveWatchOutput",
-    "test": "vitest run",
+    "test": "conc pnpm:test:*",
+    "test:bun": "bun --bun x vitest run",
+    "test:node": "vitest run",
     "watch": "conc -k pnpm:watch:*",
     "watch:code": "pnpm run start:code -- --noEmit",
     "watch:declaration": "pnpm run start:declaration -- --noEmit"

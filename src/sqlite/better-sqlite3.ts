@@ -1,4 +1,4 @@
-/** @module SQLite */
+/** @module SQLite/better-sqlite3 */
 
 import Database from 'better-sqlite3';
 import type { ContentProcedures } from '../content/procedures.js';
@@ -29,9 +29,7 @@ export interface SQLiteClientConfig extends Database.Options {
  * @param config A {@link SQLiteClientConfig} object to configure the database, or a database
  *   instance you've manually created.
  */
-export default function (
-  config: SQLiteClientConfig | Database.Database = {},
-): ClientStrategy<ContentProcedures> {
+export default function (config: SQLiteClientConfig | Database.Database = {}) {
   const SQL: Database.Database =
     config instanceof Database ? config : new Database(config.filename, config);
 
@@ -61,5 +59,5 @@ export default function (
         'INSERT OR REPLACE INTO astrobase (cid, content) VALUES (?, ?)',
       ).run(cid.toString(), content);
     },
-  };
+  } satisfies Required<Omit<ClientStrategy<ContentProcedures>, '*'>>;
 }

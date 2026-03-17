@@ -41,7 +41,8 @@
     "./src/s3/s3.ts",
     "./src/signatures/ecdsa.ts",
     "./src/signatures/index.ts",
-    "./src/sqlite/sqlite.ts",
+    "./src/sqlite/better-sqlite3.ts",
+    "./src/sqlite/bun.ts",
     "./src/varint/varint.ts",
     "./src/wraps/index.ts"
   ],

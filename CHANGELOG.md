@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Breaking Changes
+
+- Moved existing SQLite module (`better-sqlite3` implementation) from `@astrobase/sdk/sqlite` to `@astrobase/sdk/sqlite/better-sqlite3`.
+
+### Added
+
+- Added support for `bun:sqlite` at `@astrobase/sdk/sqlite/bun`.
+
+### Developer
+
+- Added CI using Bun runtime.
+
 ## [0.6.0](https://github.com/aidlran/astrobase/releases/tag/v0.6.0) - 2026-03-08
 
 ### Breaking Changes
