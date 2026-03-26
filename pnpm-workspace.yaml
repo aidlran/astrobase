@@ -1,11 +1,11 @@
 minimumReleaseAge: 2880
 
-minimumReleaseAgeExclude:
-  - fast-xml-builder
-  - fast-xml-parser
+# minimumReleaseAgeExclude:
+#   - fast-xml-builder
+#   - fast-xml-parser
 
-overrides:
-  fast-xml-parser: '^5.5.6'
+# overrides:
+#   fast-xml-parser: '^5.5.6'
 
 onlyBuiltDependencies:
   - better-sqlite3
